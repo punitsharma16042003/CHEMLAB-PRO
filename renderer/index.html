@@ -3,20 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChemLab Pro LIMS - Water Quality Laboratory</title>
-    <!-- Modern typography -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <title>ChemLab Pro LIMS - Water Analysis Console</title>
+    <!-- Corporate Clean Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <!-- Local Offline Chart.js -->
+    <script src="chart.js"></script>
 </head>
-<body class="dark-theme">
+<body>
     <div class="app-container">
-        <!-- Sidebar Navigation -->
+        <!-- Sidebar Navigation (Shimadzu Slate Style) -->
         <aside class="sidebar">
             <div class="sidebar-brand">
                 <img src="logo.png" alt="ChemLab Pro Logo" class="brand-logo">
                 <div class="brand-text">
                     <h1>ChemLab Pro</h1>
-                    <span>Water Analysis LIMS</span>
+                    <span>LabSolutions v2.1</span>
                 </div>
             </div>
             
@@ -37,9 +39,13 @@
                     <svg viewBox="0 0 24 24" class="nav-icon"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
                     <span>LSI Calculator</span>
                 </a>
-                <a href="#" class="nav-item" id="nav-bod-tss">
+                <a href="#" class="nav-item" id="nav-bod">
                     <svg viewBox="0 0 24 24" class="nav-icon"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 15H7v-2h10v2zm0-4H7v-2h10v2zm0-4H7V8h10v2z"/></svg>
-                    <span>BOD & TSS</span>
+                    <span>BOD Calculator</span>
+                </a>
+                <a href="#" class="nav-item" id="nav-tss">
+                    <svg viewBox="0 0 24 24" class="nav-icon"><path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
+                    <span>TSS Calculator</span>
                 </a>
                 <a href="#" class="nav-item" id="nav-history">
                     <svg viewBox="0 0 24 24" class="nav-icon"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
@@ -60,43 +66,34 @@
 
         <!-- Main Window Container -->
         <main class="main-content">
-            <!-- Topbar Panel -->
-            <header class="topbar glass">
+            <!-- Topbar Panel (Parameter Tab Selector Header) -->
+            <header class="topbar">
                 <div class="topbar-left">
-                    <div class="breadcrumb">
-                        <span class="active-page-title" id="page-title-label">Dashboard</span>
+                    <div class="parameter-tabs" id="parameter-tab-bar">
+                        <button class="param-tab" data-param="pH">pH (AU)</button>
+                        <button class="param-tab" data-param="Nitrate">Nitrate (mg/L)</button>
+                        <button class="param-tab active" data-param="Phosphate">Phosphate (mg/L)</button>
+                        <button class="param-tab" data-param="Iron">Iron (ppm)</button>
+                        <button class="param-tab" data-param="Fluoride">Fluoride (mg/L)</button>
                     </div>
                 </div>
                 <div class="topbar-right">
-                    <div class="active-method-badge">
-                        <span class="label">Testing Parameter:</span>
-                        <select id="parameter-select" class="param-select">
-                            <option value="pH">pH (AU)</option>
-                            <option value="Nitrate">Nitrate (mg/L)</option>
-                            <option value="Phosphate" selected>Phosphate (mg/L)</option>
-                            <option value="Iron">Iron (ppm)</option>
-                            <option value="Fluoride">Fluoride (mg/L)</option>
-                        </select>
-                    </div>
-                    <button class="btn btn-secondary btn-icon-only" id="theme-toggle-btn" title="Toggle Light/Dark Theme">
-                        🌓
-                    </button>
+                    <span class="active-page-title" id="page-title-label">Dashboard</span>
                 </div>
             </header>
 
             <!-- Dashboard View -->
             <section class="view-pane" id="dashboard-view">
-                <div class="dashboard-header-card glass">
-                    <div class="card-glow"></div>
-                    <h2>Welcome to ChemLab Pro LIMS</h2>
-                    <p>Select a method parameter at the top, standardise the instrument using a Calibration Curve, and analyze water samples with automatic guideline threshold checks.</p>
+                <div class="dashboard-header-card">
+                    <h2>Shimadzu LabSolutions - LIMS Console</h2>
+                    <p>Qualitative and quantitative analysis platform. Select a chemical parameter tab from the top header to configure standard curves and evaluate sample tests against WHO drinking standards.</p>
                 </div>
 
                 <div class="dashboard-grid">
                     <!-- Guidelines Reference -->
-                    <div class="glass card-container">
+                    <div class="panel-container">
                         <h3>💧 Safe Drinking Water Guidelines</h3>
-                        <p class="section-desc">Permissible limits according to World Health Organization (WHO) and EPA standards:</p>
+                        <p class="section-desc">WHO and EPA permissible maximum concentration thresholds:</p>
                         <table class="guidelines-table">
                             <thead>
                                 <tr>
@@ -111,43 +108,43 @@
                                     <td><strong>pH</strong></td>
                                     <td>AU</td>
                                     <td>6.5 - 8.5</td>
-                                    <td><span class="status-indicator waiting">Adjust Acidity</span></td>
+                                    <td><span class="status-indicator waiting">Neutralization</span></td>
                                 </tr>
                                 <tr>
                                     <td><strong>Nitrate</strong></td>
                                     <td>mg/L</td>
                                     <td>0.0 - 45.0</td>
-                                    <td><span class="status-indicator Down">High Risk: Dilute/Filter</span></td>
+                                    <td><span class="status-indicator danger">Anion Exchange / Dilution</span></td>
                                 </tr>
                                 <tr>
                                     <td><strong>Phosphate</strong></td>
                                     <td>mg/L</td>
                                     <td>0.0 - 5.0</td>
-                                    <td><span class="status-indicator waiting">Algae Control</span></td>
+                                    <td><span class="status-indicator waiting">Coagulation Aid</span></td>
                                 </tr>
                                 <tr>
                                     <td><strong>Iron</strong></td>
                                     <td>ppm</td>
                                     <td>0.0 - 0.3</td>
-                                    <td><span class="status-indicator Down">Aeration / Filtration</span></td>
+                                    <td><span class="status-indicator danger">Aeration / Sand Filter</span></td>
                                 </tr>
                                 <tr>
                                     <td><strong>Fluoride</strong></td>
                                     <td>mg/L</td>
                                     <td>0.0 - 1.5</td>
-                                    <td><span class="status-indicator Down">Defluoridation Needed</span></td>
+                                    <td><span class="status-indicator danger">Activated Alumina Treatment</span></td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
 
                     <!-- System Overview -->
-                    <div class="glass card-container">
-                        <h3>📊 Active Calibration Status</h3>
+                    <div class="panel-container">
+                        <h3>📊 Selected Parameter Calibration Model</h3>
                         <div class="cal-status-panel">
                             <div class="status-row">
                                 <span class="lbl">Active Model:</span>
-                                <span class="val text-cyan" id="dash-active-model-name">Phosphate Standard Model 2026</span>
+                                <span class="val text-blue" id="dash-active-model-name">Phosphate Standard Model 2026</span>
                             </div>
                             <div class="status-row">
                                 <span class="lbl">Slope (m):</span>
@@ -159,7 +156,7 @@
                             </div>
                             <div class="status-row">
                                 <span class="lbl">Linearity R²:</span>
-                                <span class="val status-indicator Operational" id="dash-active-model-r2">0.998500</span>
+                                <span class="val status-indicator safe" id="dash-active-model-r2">0.998500</span>
                             </div>
                             <div class="status-row">
                                 <span class="lbl">Created On:</span>
@@ -174,7 +171,7 @@
             <section class="view-pane hidden" id="calibration-view">
                 <div class="layout-three-columns">
                     <!-- Column 1: Config & Controls -->
-                    <div class="glass card-container panel-controls">
+                    <div class="panel-container panel-controls">
                         <h3>🧪 Calibration Setup</h3>
                         <div class="input-group">
                             <label>Standard Curve Name</label>
@@ -190,7 +187,7 @@
                     </div>
 
                     <!-- Column 2: Standards Table -->
-                    <div class="glass card-container table-column">
+                    <div class="panel-container table-column">
                         <h3>📋 Calibration Standards</h3>
                         <div class="scroll-table-wrapper">
                             <table class="lims-table" id="cal-standards-table">
@@ -199,7 +196,7 @@
                                         <th>Standard ID</th>
                                         <th class="conc-header-label">Concentration (mg/L)</th>
                                         <th>Absorbance</th>
-                                        <th style="width: 60px;">Action</th>
+                                        <th style="width: 50px;">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody id="cal-standards-tbody">
@@ -209,15 +206,12 @@
                         </div>
                     </div>
 
-                    <!-- Column 3: Canvas Curve Plot -->
-                    <div class="glass card-container plot-column">
+                    <!-- Column 3: Chart.js Plot -->
+                    <div class="panel-container plot-column">
                         <h3>📈 Interactive Calibration Plot</h3>
                         <div class="plot-canvas-container">
-                            <canvas id="calibration-plot-canvas" width="480" height="340"></canvas>
-                            <!-- Tooltip layer -->
-                            <div class="plot-tooltip" id="plot-tooltip-bubble"></div>
+                            <canvas id="calibration-chart-canvas"></canvas>
                         </div>
-                        <div class="plot-subtext">Scroll wheel on plot to zoom. Hover to view coordinates.</div>
                     </div>
                 </div>
             </section>
@@ -226,7 +220,7 @@
             <section class="view-pane hidden" id="analysis-view">
                 <div class="layout-two-columns">
                     <!-- Column 1: Run Inputs & Metadata -->
-                    <div class="glass card-container panel-controls-wide">
+                    <div class="panel-container panel-controls-wide">
                         <h3>💧 Sample Run Controller</h3>
                         <div class="run-meta-row">
                             <div class="input-group">
@@ -249,7 +243,7 @@
                     </div>
 
                     <!-- Column 2: Result Table -->
-                    <div class="glass card-container table-column-wide">
+                    <div class="panel-container table-column-wide">
                         <h3>📋 Sample Results & Limit Validator</h3>
                         <div class="scroll-table-wrapper">
                             <table class="lims-table" id="sample-results-table">
@@ -260,7 +254,7 @@
                                         <th>Dilution</th>
                                         <th class="conc-header-label">Concentration (mg/L)</th>
                                         <th>WHO Guideline Status</th>
-                                        <th style="width: 60px;">Action</th>
+                                        <th style="width: 50px;">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody id="sample-results-tbody">
@@ -276,7 +270,7 @@
             <section class="view-pane hidden" id="lsi-view">
                 <div class="layout-two-columns">
                     <!-- Inputs Card -->
-                    <div class="glass card-container panel-controls-wide">
+                    <div class="panel-container panel-controls-wide">
                         <h3>⚙️ Saturation Index Inputs</h3>
                         <p class="section-desc">Predict scale-forming or corrosive behavior of water by computing the Langelier Saturation Index (LSI):</p>
                         
@@ -307,7 +301,7 @@
                     </div>
 
                     <!-- Outputs Card -->
-                    <div class="glass card-container table-column-wide">
+                    <div class="panel-container table-column-wide">
                         <h3>📊 Langelier Index Results</h3>
                         <div class="lsi-result-display">
                             <div class="lsi-score-box">
@@ -334,13 +328,13 @@
                 </div>
             </section>
 
-            <!-- BOD & TSS View -->
-            <section class="view-pane hidden" id="bod-tss-view">
+            <!-- BOD View -->
+            <section class="view-pane hidden" id="bod-view">
                 <div class="layout-two-columns">
-                    <!-- Column 1: Titration BOD Calculator -->
-                    <div class="glass card-container panel-controls-wide">
-                        <h3>🧪 Titration BOD Calculator</h3>
-                        <p class="section-desc">Calculate Biochemical Oxygen Demand (BOD₅) using Initial and Final Dissolved Oxygen (DO) levels:</p>
+                    <!-- Column 1: Inputs -->
+                    <div class="panel-container panel-controls-wide">
+                        <h3>🧪 Titration BOD₅ Setup</h3>
+                        <p class="section-desc">Configure Biochemical Oxygen Demand (BOD₅) titration parameters:</p>
                         
                         <div class="input-grid">
                             <div class="input-group">
@@ -363,11 +357,11 @@
 
                         <!-- Seeded Dilution checkbox -->
                         <div class="input-group" style="flex-direction: row; align-items: center; gap: 8px; margin-top: 10px;">
-                            <input type="checkbox" id="bod-is-seeded" style="cursor: pointer; width: 16px; height: 16px;">
+                            <input type="checkbox" id="bod-is-seeded" style="cursor: pointer; width: 15px; height: 15px;">
                             <label for="bod-is-seeded" style="cursor: pointer; font-size: 0.8rem;">Use Seeded Dilution (Seed Correction)</label>
                         </div>
 
-                        <!-- Seeded controls (hidden by default) -->
+                        <!-- Seeded controls -->
                         <div class="input-grid hidden" id="bod-seed-controls" style="margin-top: 10px; border-top: 1px dashed var(--border-color); padding-top: 10px;">
                             <div class="input-group">
                                 <label>Seed Blank Initial DO (B1)</label>
@@ -384,9 +378,12 @@
                         </div>
 
                         <button class="btn btn-primary w-100" id="btn-calculate-bod" style="margin-top: 15px;">⚡ Compute BOD₅</button>
+                    </div>
 
-                        <!-- BOD Results display -->
-                        <div class="lsi-result-display" style="margin-top: 15px; display: none;" id="bod-results-box">
+                    <!-- Column 2: Results Display -->
+                    <div class="panel-container table-column-wide">
+                        <h3>📊 Biochemical Oxygen Demand Result</h3>
+                        <div class="lsi-result-display" style="display: none;" id="bod-results-box">
                             <div class="lsi-score-box">
                                 <span class="score-val" id="bod-score-output">0.00</span>
                                 <span class="score-lbl">mg/L BOD₅</span>
@@ -397,11 +394,16 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </section>
 
-                    <!-- Column 2: TSS Calculator -->
-                    <div class="glass card-container panel-controls-wide">
-                        <h3>🧪 Total Suspended Solids (TSS)</h3>
-                        <p class="section-desc">Calculate Total Suspended Solids (TSS) by filter paper weight change method:</p>
+            <!-- TSS View -->
+            <section class="view-pane hidden" id="tss-view">
+                <div class="layout-two-columns">
+                    <!-- Column 1: Inputs -->
+                    <div class="panel-container panel-controls-wide">
+                        <h3>🧪 Total Suspended Solids (TSS) Setup</h3>
+                        <p class="section-desc">Determine suspended solids by gravimetric weight calculation:</p>
                         
                         <div class="input-grid">
                             <div class="input-group" style="grid-column: span 2;">
@@ -419,9 +421,12 @@
                         </div>
 
                         <button class="btn btn-primary w-100" id="btn-calculate-tss" style="margin-top: 15px;">⚡ Compute TSS Concentration</button>
+                    </div>
 
-                        <!-- TSS Results display -->
-                        <div class="lsi-result-display" style="margin-top: 15px; display: none;" id="tss-results-box">
+                    <!-- Column 2: Results Display -->
+                    <div class="panel-container table-column-wide">
+                        <h3>📊 Suspended Solids Result</h3>
+                        <div class="lsi-result-display" style="display: none;" id="tss-results-box">
                             <div class="lsi-score-box">
                                 <span class="score-val" id="tss-score-output">0.00</span>
                                 <span class="score-lbl">mg/L TSS</span>
@@ -437,7 +442,7 @@
 
             <!-- Run History View -->
             <section class="view-pane hidden" id="history-view">
-                <div class="glass card-container" style="margin-bottom: 25px;">
+                <div class="panel-container" style="margin-bottom: 25px;">
                     <h3>📂 Analytical Runs History</h3>
                     <div class="scroll-table-wrapper" style="max-height: 240px;">
                         <table class="lims-table" id="history-runs-table">
@@ -459,7 +464,7 @@
                     </div>
                 </div>
 
-                <div class="glass card-container">
+                <div class="panel-container">
                     <h3>📂 Calibration Curve Database</h3>
                     <div class="scroll-table-wrapper" style="max-height: 240px;">
                         <table class="lims-table" id="history-cals-table">
