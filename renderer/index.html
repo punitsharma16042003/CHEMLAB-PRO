@@ -37,6 +37,10 @@
                     <svg viewBox="0 0 24 24" class="nav-icon"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
                     <span>LSI Calculator</span>
                 </a>
+                <a href="#" class="nav-item" id="nav-bod-tss">
+                    <svg viewBox="0 0 24 24" class="nav-icon"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 15H7v-2h10v2zm0-4H7v-2h10v2zm0-4H7V8h10v2z"/></svg>
+                    <span>BOD & TSS</span>
+                </a>
                 <a href="#" class="nav-item" id="nav-history">
                     <svg viewBox="0 0 24 24" class="nav-icon"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
                     <span>Run History</span>
@@ -324,6 +328,107 @@
                                 <div class="break-item"><span class="lbl">Calcium Factor (Cf):</span> <span class="val" id="lsi-val-cf">1.68</span></div>
                                 <div class="break-item"><span class="lbl">Alkalinity Factor (Af):</span> <span class="val" id="lsi-val-af">2.00</span></div>
                                 <div class="break-item"><span class="lbl">TDS Constant (A):</span> <span class="val" id="lsi-val-const">9.78</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- BOD & TSS View -->
+            <section class="view-pane hidden" id="bod-tss-view">
+                <div class="layout-two-columns">
+                    <!-- Column 1: Titration BOD Calculator -->
+                    <div class="glass card-container panel-controls-wide">
+                        <h3>🧪 Titration BOD Calculator</h3>
+                        <p class="section-desc">Calculate Biochemical Oxygen Demand (BOD₅) using Initial and Final Dissolved Oxygen (DO) levels:</p>
+                        
+                        <div class="input-grid">
+                            <div class="input-group">
+                                <label>Initial DO (mg/L) [D1]</label>
+                                <input type="number" id="bod-initial-do" value="8.5" step="0.1">
+                            </div>
+                            <div class="input-group">
+                                <label>Final DO (mg/L) [D2]</label>
+                                <input type="number" id="bod-final-do" value="4.2" step="0.1">
+                            </div>
+                            <div class="input-group">
+                                <label>Sample Volume (mL)</label>
+                                <input type="number" id="bod-sample-vol" value="10" step="1">
+                            </div>
+                            <div class="input-group">
+                                <label>Dilution Bottle Vol (mL)</label>
+                                <input type="number" id="bod-bottle-vol" value="300" step="1">
+                            </div>
+                        </div>
+
+                        <!-- Seeded Dilution checkbox -->
+                        <div class="input-group" style="flex-direction: row; align-items: center; gap: 8px; margin-top: 10px;">
+                            <input type="checkbox" id="bod-is-seeded" style="cursor: pointer; width: 16px; height: 16px;">
+                            <label for="bod-is-seeded" style="cursor: pointer; font-size: 0.8rem;">Use Seeded Dilution (Seed Correction)</label>
+                        </div>
+
+                        <!-- Seeded controls (hidden by default) -->
+                        <div class="input-grid hidden" id="bod-seed-controls" style="margin-top: 10px; border-top: 1px dashed var(--border-color); padding-top: 10px;">
+                            <div class="input-group">
+                                <label>Seed Blank Initial DO (B1)</label>
+                                <input type="number" id="bod-seed-b1" value="8.4" step="0.1">
+                            </div>
+                            <div class="input-group">
+                                <label>Seed Blank Final DO (B2)</label>
+                                <input type="number" id="bod-seed-b2" value="8.0" step="0.1">
+                            </div>
+                            <div class="input-group" style="grid-column: span 2;">
+                                <label>Seed Volume in Sample Bottle (mL)</label>
+                                <input type="number" id="bod-seed-vol-in-bottle" value="2.0" step="0.1">
+                            </div>
+                        </div>
+
+                        <button class="btn btn-primary w-100" id="btn-calculate-bod" style="margin-top: 15px;">⚡ Compute BOD₅</button>
+
+                        <!-- BOD Results display -->
+                        <div class="lsi-result-display" style="margin-top: 15px; display: none;" id="bod-results-box">
+                            <div class="lsi-score-box">
+                                <span class="score-val" id="bod-score-output">0.00</span>
+                                <span class="score-lbl">mg/L BOD₅</span>
+                            </div>
+                            <div class="lsi-verdict-box" id="bod-verdict-panel">
+                                <h4 id="bod-verdict-title">BOD Level</h4>
+                                <p id="bod-verdict-desc">-</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Column 2: TSS Calculator -->
+                    <div class="glass card-container panel-controls-wide">
+                        <h3>🧪 Total Suspended Solids (TSS)</h3>
+                        <p class="section-desc">Calculate Total Suspended Solids (TSS) by filter paper weight change method:</p>
+                        
+                        <div class="input-grid">
+                            <div class="input-group" style="grid-column: span 2;">
+                                <label>Clean Dry Filter Paper Weight (g) [B]</label>
+                                <input type="number" id="tss-paper-empty" value="1.2405" step="0.0001">
+                            </div>
+                            <div class="input-group" style="grid-column: span 2;">
+                                <label>Dried Filter + Residue Weight (g) [A]</label>
+                                <input type="number" id="tss-paper-dirty" value="1.2482" step="0.0001">
+                            </div>
+                            <div class="input-group" style="grid-column: span 2;">
+                                <label>Filtered Water Sample Volume (mL)</label>
+                                <input type="number" id="tss-sample-vol" value="250" step="10">
+                            </div>
+                        </div>
+
+                        <button class="btn btn-primary w-100" id="btn-calculate-tss" style="margin-top: 15px;">⚡ Compute TSS Concentration</button>
+
+                        <!-- TSS Results display -->
+                        <div class="lsi-result-display" style="margin-top: 15px; display: none;" id="tss-results-box">
+                            <div class="lsi-score-box">
+                                <span class="score-val" id="tss-score-output">0.00</span>
+                                <span class="score-lbl">mg/L TSS</span>
+                            </div>
+                            <div class="lsi-verdict-box" id="tss-verdict-panel">
+                                <h4 id="tss-verdict-title">TSS Level</h4>
+                                <p id="tss-verdict-desc">-</p>
                             </div>
                         </div>
                     </div>

@@ -50,6 +50,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         'nav-calibration': 'calibration',
         'nav-analysis': 'analysis',
         'nav-lsi': 'lsi',
+        'nav-bod-tss': 'bod-tss',
         'nav-history': 'history'
     };
 
@@ -89,6 +90,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('btn-export-csv').addEventListener('click', exportRunToCSV);
 
     document.getElementById('btn-calculate-lsi').addEventListener('click', calculateLSI);
+
+    // BOD & TSS bindings
+    document.getElementById('bod-is-seeded').addEventListener('change', (e) => {
+        const seedCtrls = document.getElementById('bod-seed-controls');
+        if (e.target.checked) {
+            seedCtrls.classList.remove('hidden');
+        } else {
+            seedCtrls.classList.add('hidden');
+        }
+    });
+
+    document.getElementById('btn-calculate-bod').addEventListener('click', calculateBOD);
+    document.getElementById('btn-calculate-tss').addEventListener('click', calculateTSS);
 
     // Canvas event bindings (zooming, hover tooltips)
     canvas.addEventListener('wheel', handleCanvasZoom);
@@ -975,6 +989,110 @@ function dialogInfo(title, msg) {
 
 function dialogError(title, msg) {
     alert(`❌ ERROR: ${title}\n\n${msg}`);
+}
+
+// BOD Calculator Logic
+function calculateBOD() {
+    const d1 = parseFloat(document.getElementById('bod-initial-do').value) || 0.0;
+    const d2 = parseFloat(document.getElementById('bod-final-do').value) || 0.0;
+    const sampleVol = parseFloat(document.getElementById('bod-sample-vol').value) || 1.0;
+    const bottleVol = parseFloat(document.getElementById('bod-bottle-vol').value) || 300.0;
+    const isSeeded = document.getElementById('bod-is-seeded').checked;
+
+    if (sampleVol <= 0 || bottleVol <= 0) {
+        dialogError("BOD Calculation Error", "Sample volume and bottle volume must be greater than zero.");
+        return;
+    }
+
+    const P = sampleVol / bottleVol;
+    let bod = 0.0;
+
+    if (isSeeded) {
+        const b1 = parseFloat(document.getElementById('bod-seed-b1').value) || 0.0;
+        const b2 = parseFloat(document.getElementById('bod-seed-b2').value) || 0.0;
+        const seedVolInBottle = parseFloat(document.getElementById('bod-seed-vol-in-bottle').value) || 0.0;
+        
+        // Ratio of seed in sample to seed in control
+        const f = seedVolInBottle / bottleVol;
+        
+        // Seeded BOD formula: BOD5 = [ (D1 - D2) - (B1 - B2) * f ] / P
+        bod = ((d1 - d2) - (b1 - b2) * f) / P;
+    } else {
+        // Unseeded BOD formula: BOD5 = (D1 - D2) / P
+        bod = (d1 - d2) / P;
+    }
+
+    if (bod < 0) bod = 0.0;
+
+    // Display results
+    document.getElementById('bod-results-box').style.display = 'grid';
+    document.getElementById('bod-score-output').textContent = bod.toFixed(2);
+
+    const verdictPanel = document.getElementById('bod-verdict-panel');
+    const verdictTitle = document.getElementById('bod-verdict-title');
+    const verdictDesc = document.getElementById('bod-verdict-desc');
+
+    verdictPanel.className = 'lsi-verdict-box';
+
+    if (bod < 2.0) {
+        verdictTitle.textContent = "Clean Water (Safe)";
+        verdictDesc.textContent = "BOD is below 2 mg/L. The water contains minimal biodegradable organic matter. Typical of clean streams or well-treated drinking water sources.";
+    } else if (bod <= 8.0) {
+        verdictPanel.classList.add('scale-forming'); // Orange theme
+        verdictTitle.textContent = "Moderately Polluted";
+        verdictDesc.textContent = "BOD is between 2 and 8 mg/L. Indicates moderate organic loading. Commonly seen in surface waters receiving agricultural runoff or treated secondary effluents.";
+    } else {
+        verdictPanel.classList.add('corrosive'); // Red theme
+        verdictTitle.textContent = "Highly Polluted Alert";
+        verdictDesc.textContent = "BOD exceeds 8 mg/L. High concentration of organic pollutants. The water will deplete dissolved oxygen rapidly, threatening fish and requiring immediate aeration treatment.";
+    }
+
+    setStatusText(`BOD calculation completed: ${bod.toFixed(2)} mg/L`);
+}
+
+// TSS Calculator Logic
+function calculateTSS() {
+    const emptyWeight = parseFloat(document.getElementById('tss-paper-empty').value) || 0.0;
+    const dirtyWeight = parseFloat(document.getElementById('tss-paper-dirty').value) || 0.0;
+    const sampleVol = parseFloat(document.getElementById('tss-sample-vol').value) || 1.0;
+
+    if (sampleVol <= 0) {
+        dialogError("TSS Calculation Error", "Sample volume must be greater than zero.");
+        return;
+    }
+
+    if (dirtyWeight < emptyWeight) {
+        dialogError("TSS Calculation Warning", "Filter weight with residue is less than empty filter weight. Please verify measurements.");
+        return;
+    }
+
+    // Formula: TSS (mg/L) = (A - B) * 1,000,000 / sampleVol (mL)
+    const tss = ((dirtyWeight - emptyWeight) * 1000000) / sampleVol;
+
+    // Display results
+    document.getElementById('tss-results-box').style.display = 'grid';
+    document.getElementById('tss-score-output').textContent = tss.toFixed(1);
+
+    const verdictPanel = document.getElementById('tss-verdict-panel');
+    const verdictTitle = document.getElementById('tss-verdict-title');
+    const verdictDesc = document.getElementById('tss-verdict-desc');
+
+    verdictPanel.className = 'lsi-verdict-box';
+
+    if (tss < 25.0) {
+        verdictTitle.textContent = "Clear Water (Low Solids)";
+        verdictDesc.textContent = "TSS level is below 25 mg/L. Water is visually clear and meets general requirements for municipal distribution and general aquatic health.";
+    } else if (tss <= 100.0) {
+        verdictPanel.classList.add('scale-forming'); // Orange theme
+        verdictTitle.textContent = "High Suspended Solids";
+        verdictDesc.textContent = "TSS is between 25 and 100 mg/L. Moderate turbidity. Sand/carbon filtration backwashes or coagulation aids may be required to clear suspended matter.";
+    } else {
+        verdictPanel.classList.add('corrosive'); // Red theme
+        verdictTitle.textContent = "Highly Turbid Water Alert";
+        verdictDesc.textContent = "TSS exceeds 100 mg/L. Severe turbidity from silt, clay, or algae. High solids block sunlight, scale analytical piping, and require flocculation settling.";
+    }
+
+    setStatusText(`TSS calculation completed: ${tss.toFixed(1)} mg/L`);
 }
 
 // Fallback JSON template in case main fails
