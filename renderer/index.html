@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChemLab Pro LIMS - Water Quality Laboratory</title>
+    <!-- Modern typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="dark-theme">
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <img src="logo.png" alt="ChemLab Pro Logo" class="brand-logo">
+                <div class="brand-text">
+                    <h1>ChemLab Pro</h1>
+                    <span>Water Analysis LIMS</span>
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" id="nav-dashboard">
+                    <svg viewBox="0 0 24 24" class="nav-icon"><path d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-4.86 8.86l-3 3.87L9 13.14 6 17h12l-3.86-5.14z"/></svg>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="nav-item" id="nav-calibration">
+                    <svg viewBox="0 0 24 24" class="nav-icon"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
+                    <span>Calibration Curve</span>
+                </a>
+                <a href="#" class="nav-item" id="nav-analysis">
+                    <svg viewBox="0 0 24 24" class="nav-icon"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                    <span>Water Analysis</span>
+                </a>
+                <a href="#" class="nav-item" id="nav-lsi">
+                    <svg viewBox="0 0 24 24" class="nav-icon"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+                    <span>LSI Calculator</span>
+                </a>
+                <a href="#" class="nav-item" id="nav-history">
+                    <svg viewBox="0 0 24 24" class="nav-icon"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+                    <span>Run History</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="operator-profile">
+                    <div class="operator-avatar">OP</div>
+                    <div class="operator-details">
+                        <span class="op-title">Current Operator</span>
+                        <input type="text" id="operator-name-input" value="Analyst P. Sharma" class="op-input">
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Window Container -->
+        <main class="main-content">
+            <!-- Topbar Panel -->
+            <header class="topbar glass">
+                <div class="topbar-left">
+                    <div class="breadcrumb">
+                        <span class="active-page-title" id="page-title-label">Dashboard</span>
+                    </div>
+                </div>
+                <div class="topbar-right">
+                    <div class="active-method-badge">
+                        <span class="label">Testing Parameter:</span>
+                        <select id="parameter-select" class="param-select">
+                            <option value="pH">pH (AU)</option>
+                            <option value="Nitrate">Nitrate (mg/L)</option>
+                            <option value="Phosphate" selected>Phosphate (mg/L)</option>
+                            <option value="Iron">Iron (ppm)</option>
+                            <option value="Fluoride">Fluoride (mg/L)</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-secondary btn-icon-only" id="theme-toggle-btn" title="Toggle Light/Dark Theme">
+                        🌓
+                    </button>
+                </div>
+            </header>
+
+            <!-- Dashboard View -->
+            <section class="view-pane" id="dashboard-view">
+                <div class="dashboard-header-card glass">
+                    <div class="card-glow"></div>
+                    <h2>Welcome to ChemLab Pro LIMS</h2>
+                    <p>Select a method parameter at the top, standardise the instrument using a Calibration Curve, and analyze water samples with automatic guideline threshold checks.</p>
+                </div>
+
+                <div class="dashboard-grid">
+                    <!-- Guidelines Reference -->
+                    <div class="glass card-container">
+                        <h3>💧 Safe Drinking Water Guidelines</h3>
+                        <p class="section-desc">Permissible limits according to World Health Organization (WHO) and EPA standards:</p>
+                        <table class="guidelines-table">
+                            <thead>
+                                <tr>
+                                    <th>Parameter</th>
+                                    <th>Unit</th>
+                                    <th>Standard Range</th>
+                                    <th>Action If Exceeded</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>pH</strong></td>
+                                    <td>AU</td>
+                                    <td>6.5 - 8.5</td>
+                                    <td><span class="status-indicator waiting">Adjust Acidity</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Nitrate</strong></td>
+                                    <td>mg/L</td>
+                                    <td>0.0 - 45.0</td>
+                                    <td><span class="status-indicator Down">High Risk: Dilute/Filter</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Phosphate</strong></td>
+                                    <td>mg/L</td>
+                                    <td>0.0 - 5.0</td>
+                                    <td><span class="status-indicator waiting">Algae Control</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Iron</strong></td>
+                                    <td>ppm</td>
+                                    <td>0.0 - 0.3</td>
+                                    <td><span class="status-indicator Down">Aeration / Filtration</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Fluoride</strong></td>
+                                    <td>mg/L</td>
+                                    <td>0.0 - 1.5</td>
+                                    <td><span class="status-indicator Down">Defluoridation Needed</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- System Overview -->
+                    <div class="glass card-container">
+                        <h3>📊 Active Calibration Status</h3>
+                        <div class="cal-status-panel">
+                            <div class="status-row">
+                                <span class="lbl">Active Model:</span>
+                                <span class="val text-cyan" id="dash-active-model-name">Phosphate Standard Model 2026</span>
+                            </div>
+                            <div class="status-row">
+                                <span class="lbl">Slope (m):</span>
+                                <span class="val" id="dash-active-model-slope">0.00821000</span>
+                            </div>
+                            <div class="status-row">
+                                <span class="lbl">Intercept (c):</span>
+                                <span class="val" id="dash-active-model-intercept">0.00154000</span>
+                            </div>
+                            <div class="status-row">
+                                <span class="lbl">Linearity R²:</span>
+                                <span class="val status-indicator Operational" id="dash-active-model-r2">0.998500</span>
+                            </div>
+                            <div class="status-row">
+                                <span class="lbl">Created On:</span>
+                                <span class="val" id="dash-active-model-date">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Calibration Curve View -->
+            <section class="view-pane hidden" id="calibration-view">
+                <div class="layout-three-columns">
+                    <!-- Column 1: Config & Controls -->
+                    <div class="glass card-container panel-controls">
+                        <h3>🧪 Calibration Setup</h3>
+                        <div class="input-group">
+                            <label>Standard Curve Name</label>
+                            <input type="text" id="cal-model-name-input" value="Standard Calibration Curve">
+                        </div>
+                        
+                        <div class="control-actions">
+                            <button class="btn btn-secondary w-100" id="btn-add-standard-row">➕ Add Standard Row</button>
+                            <button class="btn btn-primary w-100" id="btn-calculate-curve">📊 Calculate Curve</button>
+                            <button class="btn btn-ok w-100" id="btn-save-calibration">💾 Store & Apply Model</button>
+                            <button class="btn btn-secondary w-100" id="btn-export-curve-image">🖼️ Save Plot Image</button>
+                        </div>
+                    </div>
+
+                    <!-- Column 2: Standards Table -->
+                    <div class="glass card-container table-column">
+                        <h3>📋 Calibration Standards</h3>
+                        <div class="scroll-table-wrapper">
+                            <table class="lims-table" id="cal-standards-table">
+                                <thead>
+                                    <tr>
+                                        <th>Standard ID</th>
+                                        <th class="conc-header-label">Concentration (mg/L)</th>
+                                        <th>Absorbance</th>
+                                        <th style="width: 60px;">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="cal-standards-tbody">
+                                    <!-- Dynamic rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Column 3: Canvas Curve Plot -->
+                    <div class="glass card-container plot-column">
+                        <h3>📈 Interactive Calibration Plot</h3>
+                        <div class="plot-canvas-container">
+                            <canvas id="calibration-plot-canvas" width="480" height="340"></canvas>
+                            <!-- Tooltip layer -->
+                            <div class="plot-tooltip" id="plot-tooltip-bubble"></div>
+                        </div>
+                        <div class="plot-subtext">Scroll wheel on plot to zoom. Hover to view coordinates.</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Water Analysis View -->
+            <section class="view-pane hidden" id="analysis-view">
+                <div class="layout-two-columns">
+                    <!-- Column 1: Run Inputs & Metadata -->
+                    <div class="glass card-container panel-controls-wide">
+                        <h3>💧 Sample Run Controller</h3>
+                        <div class="run-meta-row">
+                            <div class="input-group">
+                                <label>Analytical Run ID</label>
+                                <input type="text" id="analysis-run-id-input" value="RUN-20260725-1200" readonly>
+                            </div>
+                        </div>
+                        <div class="active-cal-summary-card">
+                            <h4>Applied Calibration Model</h4>
+                            <div class="meta-item"><span class="label">Name:</span> <span class="val" id="run-cal-name">-</span></div>
+                            <div class="meta-item"><span class="label">Equation:</span> <span class="val" id="run-cal-equation">-</span></div>
+                            <div class="meta-item"><span class="label">R² value:</span> <span class="val" id="run-cal-r2">-</span></div>
+                        </div>
+                        <div class="control-actions">
+                            <button class="btn btn-secondary w-100" id="btn-add-sample-row">➕ Add Sample Row</button>
+                            <button class="btn btn-primary w-100" id="btn-calculate-batch">🧪 Calculate Batch</button>
+                            <button class="btn btn-ok w-100" id="btn-save-run">💾 Save Analytical Run</button>
+                            <button class="btn btn-secondary w-100" id="btn-export-csv">📤 Export Batch CSV</button>
+                        </div>
+                    </div>
+
+                    <!-- Column 2: Result Table -->
+                    <div class="glass card-container table-column-wide">
+                        <h3>📋 Sample Results & Limit Validator</h3>
+                        <div class="scroll-table-wrapper">
+                            <table class="lims-table" id="sample-results-table">
+                                <thead>
+                                    <tr>
+                                        <th>Sample ID</th>
+                                        <th>Absorbance</th>
+                                        <th>Dilution</th>
+                                        <th class="conc-header-label">Concentration (mg/L)</th>
+                                        <th>WHO Guideline Status</th>
+                                        <th style="width: 60px;">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="sample-results-tbody">
+                                    <!-- Dynamic rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- LSI Calculator View -->
+            <section class="view-pane hidden" id="lsi-view">
+                <div class="layout-two-columns">
+                    <!-- Inputs Card -->
+                    <div class="glass card-container panel-controls-wide">
+                        <h3>⚙️ Saturation Index Inputs</h3>
+                        <p class="section-desc">Predict scale-forming or corrosive behavior of water by computing the Langelier Saturation Index (LSI):</p>
+                        
+                        <div class="input-grid">
+                            <div class="input-group">
+                                <label>Water Temperature (°C)</label>
+                                <input type="number" id="lsi-temp" value="25" step="0.5">
+                            </div>
+                            <div class="input-group">
+                                <label>Measured pH</label>
+                                <input type="number" id="lsi-ph" value="7.8" step="0.05">
+                            </div>
+                            <div class="input-group">
+                                <label>Calcium Hardness (mg/L CaCO₃)</label>
+                                <input type="number" id="lsi-calcium" value="120" step="1">
+                            </div>
+                            <div class="input-group">
+                                <label>Total Alkalinity (mg/L CaCO₃)</label>
+                                <input type="number" id="lsi-alkalinity" value="100" step="1">
+                            </div>
+                            <div class="input-group">
+                                <label>Total Dissolved Solids (mg/L TDS)</label>
+                                <input type="number" id="lsi-tds" value="320" step="5">
+                            </div>
+                        </div>
+
+                        <button class="btn btn-primary w-100" id="btn-calculate-lsi" style="margin-top: 15px;">⚡ Compute Langelier Index</button>
+                    </div>
+
+                    <!-- Outputs Card -->
+                    <div class="glass card-container table-column-wide">
+                        <h3>📊 Langelier Index Results</h3>
+                        <div class="lsi-result-display">
+                            <div class="lsi-score-box">
+                                <span class="score-val" id="lsi-score-output">0.00</span>
+                                <span class="score-lbl">LSI Index Score</span>
+                            </div>
+                            <div class="lsi-verdict-box" id="lsi-verdict-panel">
+                                <h4 id="lsi-verdict-title">Balanced Water</h4>
+                                <p id="lsi-verdict-desc">Water is in chemical equilibrium. It is neither corrosive nor scale-forming.</p>
+                            </div>
+                        </div>
+
+                        <div class="lsi-breakdown-panel">
+                            <h4>Parameters Breakdown</h4>
+                            <div class="breakdown-grid">
+                                <div class="break-item"><span class="lbl">Saturation pH (pHs):</span> <span class="val" id="lsi-val-phs">7.80</span></div>
+                                <div class="break-item"><span class="lbl">Temperature Factor (Tf):</span> <span class="val" id="lsi-val-tf">0.60</span></div>
+                                <div class="break-item"><span class="lbl">Calcium Factor (Cf):</span> <span class="val" id="lsi-val-cf">1.68</span></div>
+                                <div class="break-item"><span class="lbl">Alkalinity Factor (Af):</span> <span class="val" id="lsi-val-af">2.00</span></div>
+                                <div class="break-item"><span class="lbl">TDS Constant (A):</span> <span class="val" id="lsi-val-const">9.78</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Run History View -->
+            <section class="view-pane hidden" id="history-view">
+                <div class="glass card-container" style="margin-bottom: 25px;">
+                    <h3>📂 Analytical Runs History</h3>
+                    <div class="scroll-table-wrapper" style="max-height: 240px;">
+                        <table class="lims-table" id="history-runs-table">
+                            <thead>
+                                <tr>
+                                    <th>Run ID</th>
+                                    <th>Parameter</th>
+                                    <th>Calibration Name</th>
+                                    <th>Operator</th>
+                                    <th>Samples Count</th>
+                                    <th>Created At</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="history-runs-tbody">
+                                <!-- Dynamic rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="glass card-container">
+                    <h3>📂 Calibration Curve Database</h3>
+                    <div class="scroll-table-wrapper" style="max-height: 240px;">
+                        <table class="lims-table" id="history-cals-table">
+                            <thead>
+                                <tr>
+                                    <th>Model ID</th>
+                                    <th>Parameter</th>
+                                    <th>Model Name</th>
+                                    <th>Slope</th>
+                                    <th>Intercept</th>
+                                    <th>R² Linearity</th>
+                                    <th>Status</th>
+                                    <th>Created At</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="history-cals-tbody">
+                                <!-- Dynamic rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Status Bar Footer -->
+            <footer class="statusbar">
+                <span id="status-text-label">System Ready</span>
+            </footer>
+        </main>
+    </div>
+
+    <!-- Main Logic Script -->
+    <script src="app.js"></script>
+</body>
+</html>

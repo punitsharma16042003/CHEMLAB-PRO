@@ -1,0 +1,46 @@
+{
+  "name": "chemlab-pro",
+  "version": "2.0.0",
+  "description": "ChemLab Pro LIMS - Qualitative & Quantitative Analytical Laboratory System",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --windows"
+  },
+  "keywords": [
+    "lims",
+    "laboratory",
+    "chemistry",
+    "water-testing",
+    "calibration"
+  ],
+  "author": "Antigravity",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^31.7.7",
+    "electron-builder": "^26.15.3"
+  },
+  "build": {
+    "appId": "com.chemlabpro.app",
+    "productName": "ChemLabPro",
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "icon": "renderer/logo.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "ChemLabPro"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "package.json",
+      "renderer/**/*"
+    ]
+  }
+}

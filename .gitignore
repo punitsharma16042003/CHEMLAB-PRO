@@ -1,0 +1,5 @@
+node_modules/
+dist/
+powershell.cmd
+*.log
+fetch_repos.js
