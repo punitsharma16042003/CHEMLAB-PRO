@@ -1,11 +1,11 @@
-# ChemLab Pro LIMS v2.0 🧪
+# ChemLab Pro LIMS v1.0 🧪
 > **Qualitative & Quantitative Laboratory Information Management System**
 
 ChemLab Pro is a high-tech, premium desktop application built with Electron, HTML5, CSS3, and JavaScript designed as an advanced alternative to LabSolutions software for water quality analytical testing.
 
 ---
 
-## 🌟 Key Upgrades & Features in v2.0
+## 🌟 Key Upgrades & Features in v1.0
 
 - **💎 Extra Ordinary Glassmorphism Theme**
   - Futuristic dark glass theme with purple and cyan neon highlights.
