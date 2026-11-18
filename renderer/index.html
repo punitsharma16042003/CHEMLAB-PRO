@@ -77,7 +77,8 @@
                         <button class="param-tab" data-param="Fluoride">Fluoride (mg/L)</button>
                     </div>
                 </div>
-                <div class="topbar-right">
+                <div class="topbar-right" style="display: flex; align-items: center; gap: 12px;">
+                    <button class="btn btn-secondary" id="btn-open-params-modal" style="padding: 4px 10px; font-size: 0.75rem;">⚙️ Analyte Limits</button>
                     <span class="active-page-title" id="page-title-label">Dashboard</span>
                 </div>
             </header>
@@ -177,9 +178,38 @@
                             <label>Standard Curve Name</label>
                             <input type="text" id="cal-model-name-input" value="Standard Calibration Curve">
                         </div>
+
+                        <div class="input-group" style="flex-direction: row; align-items: center; gap: 8px; margin: 2px 0;">
+                            <input type="checkbox" id="cal-force-zero" style="cursor: pointer; width: 14px; height: 14px;">
+                            <label for="cal-force-zero" style="cursor: pointer; font-size: 0.72rem; text-transform: none; font-weight: 600;">Force Zero Intercept (y = mx)</label>
+                        </div>
+
+                        <!-- Metrological Statistics Box -->
+                        <div class="active-cal-summary-card">
+                            <h4>IUPAC / ISO Metrology Metrics</h4>
+                            <div class="metro-grid">
+                                <div class="metro-card">
+                                    <span class="metro-lbl">LOD:</span>
+                                    <span class="metro-val" id="metro-lod">-</span>
+                                </div>
+                                <div class="metro-card">
+                                    <span class="metro-lbl">LOQ:</span>
+                                    <span class="metro-val" id="metro-loq">-</span>
+                                </div>
+                                <div class="metro-card">
+                                    <span class="metro-lbl">Sy/x (SE):</span>
+                                    <span class="metro-val" id="metro-syx">-</span>
+                                </div>
+                                <div class="metro-card">
+                                    <span class="metro-lbl">Sm (Slope SE):</span>
+                                    <span class="metro-val" id="metro-sm">-</span>
+                                </div>
+                            </div>
+                        </div>
                         
                         <div class="control-actions">
                             <button class="btn btn-secondary w-100" id="btn-add-standard-row">➕ Add Standard Row</button>
+                            <button class="btn btn-secondary w-100" id="btn-import-standards">📥 Batch Import Standards</button>
                             <button class="btn btn-primary w-100" id="btn-calculate-curve">📊 Calculate Curve</button>
                             <button class="btn btn-ok w-100" id="btn-save-calibration">💾 Store & Apply Model</button>
                             <button class="btn btn-secondary w-100" id="btn-export-curve-image">🖼️ Save Plot Image</button>
@@ -208,7 +238,10 @@
 
                     <!-- Column 3: Chart.js Plot -->
                     <div class="panel-container plot-column">
-                        <h3>📈 Interactive Calibration Plot</h3>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px solid var(--border-color); padding-bottom: 6px;">
+                            <h3 style="border: none; margin: 0; padding: 0;" id="plot-header-title">📈 Calibration Curve & Regression</h3>
+                            <button class="btn btn-secondary" id="btn-toggle-residuals" style="padding: 2px 8px; font-size: 0.72rem;">📉 View Residuals</button>
+                        </div>
                         <div class="plot-canvas-container">
                             <canvas id="calibration-chart-canvas"></canvas>
                         </div>
@@ -236,9 +269,11 @@
                         </div>
                         <div class="control-actions">
                             <button class="btn btn-secondary w-100" id="btn-add-sample-row">➕ Add Sample Row</button>
+                            <button class="btn btn-secondary w-100" id="btn-import-samples">📥 Batch Import Samples</button>
                             <button class="btn btn-primary w-100" id="btn-calculate-batch">🧪 Calculate Batch</button>
                             <button class="btn btn-ok w-100" id="btn-save-run">💾 Save Analytical Run</button>
                             <button class="btn btn-secondary w-100" id="btn-export-csv">📤 Export Batch CSV</button>
+                            <button class="btn btn-secondary w-100" id="btn-generate-coa" style="color: var(--accent-blue); font-weight: 700;">🖨️ Certificate of Analysis (CoA)</button>
                         </div>
                     </div>
 
@@ -302,16 +337,31 @@
 
                     <!-- Outputs Card -->
                     <div class="panel-container table-column-wide">
-                        <h3>📊 Langelier Index Results</h3>
-                        <div class="lsi-result-display">
-                            <div class="lsi-score-box">
-                                <span class="score-val" id="lsi-score-output">0.00</span>
-                                <span class="score-lbl">LSI Index Score</span>
+                        <h3>📊 Comprehensive Stability & Scaling Indices</h3>
+                        <div class="multi-index-grid">
+                            <div class="index-card">
+                                <span class="val" id="lsi-score-output">0.00</span>
+                                <span class="lbl">LSI (Langelier)</span>
+                                <span class="verdict-tag safe" id="lsi-tag">Balanced</span>
                             </div>
-                            <div class="lsi-verdict-box" id="lsi-verdict-panel">
-                                <h4 id="lsi-verdict-title">Balanced Water</h4>
-                                <p id="lsi-verdict-desc">Water is in chemical equilibrium. It is neither corrosive nor scale-forming.</p>
+                            <div class="index-card">
+                                <span class="val" id="rsi-score-output">7.80</span>
+                                <span class="lbl">RSI (Ryznar)</span>
+                                <span class="verdict-tag safe" id="rsi-tag">Equilibrium</span>
                             </div>
+                            <div class="index-card">
+                                <span class="val" id="psi-score-output">7.50</span>
+                                <span class="lbl">PSI (Puckorius)</span>
+                                <span class="verdict-tag safe" id="psi-tag">Non-Scaling</span>
+                            </div>
+                        </div>
+
+                        <div class="lsi-verdict-box" id="lsi-verdict-panel" style="margin-bottom: 14px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                <h4 id="lsi-verdict-title" style="margin: 0;">Balanced Water (Ideal)</h4>
+                                <span class="status-indicator safe" id="hardness-badge">Moderate Hardness</span>
+                            </div>
+                            <p id="lsi-verdict-desc">Water is in chemical equilibrium. It is neither corrosive nor scale-forming.</p>
                         </div>
 
                         <div class="lsi-breakdown-panel">
@@ -443,8 +493,11 @@
             <!-- Run History View -->
             <section class="view-pane hidden" id="history-view">
                 <div class="panel-container" style="margin-bottom: 25px;">
-                    <h3>📂 Analytical Runs History</h3>
-                    <div class="scroll-table-wrapper" style="max-height: 240px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 6px;">
+                        <h3 style="border: none; margin: 0; padding: 0;">📂 Analytical Runs History</h3>
+                        <input type="text" id="history-runs-search" placeholder="🔍 Filter runs by ID or Analyte..." style="padding: 4px 10px; font-size: 0.75rem; border: 1px solid var(--border-color); border-radius: 2px; width: 220px;">
+                    </div>
+                    <div class="scroll-table-wrapper" style="max-height: 250px;">
                         <table class="lims-table" id="history-runs-table">
                             <thead>
                                 <tr>
@@ -454,7 +507,7 @@
                                     <th>Operator</th>
                                     <th>Samples Count</th>
                                     <th>Created At</th>
-                                    <th>Action</th>
+                                    <th style="width: 190px;">Action</th>
                                 </tr>
                             </thead>
                             <tbody id="history-runs-tbody">
@@ -466,7 +519,7 @@
 
                 <div class="panel-container">
                     <h3>📂 Calibration Curve Database</h3>
-                    <div class="scroll-table-wrapper" style="max-height: 240px;">
+                    <div class="scroll-table-wrapper" style="max-height: 250px;">
                         <table class="lims-table" id="history-cals-table">
                             <thead>
                                 <tr>
@@ -478,7 +531,7 @@
                                     <th>R² Linearity</th>
                                     <th>Status</th>
                                     <th>Created At</th>
-                                    <th>Action</th>
+                                    <th style="width: 140px;">Action</th>
                                 </tr>
                             </thead>
                             <tbody id="history-cals-tbody">
@@ -494,6 +547,210 @@
                 <span id="status-text-label">System Ready</span>
             </footer>
         </main>
+    </div>
+
+    <!-- Toast Notifications Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Batch Data Importer Modal -->
+    <div id="batch-import-modal" class="modal-overlay hidden">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3 id="import-modal-title">📥 Batch Data Importer</h3>
+                <button class="modal-close-btn" onclick="closeModal('batch-import-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p style="color: var(--text-muted); font-size: 0.78rem;">
+                    Paste tabular data copied directly from Excel, CSV, or instruments. Support formats: 
+                    <br><strong>Standards:</strong> <code>ID [tab/,] Concentration [tab/,] Absorbance</code> or <code>Concentration [tab/,] Absorbance</code>
+                    <br><strong>Samples:</strong> <code>Sample_ID [tab/,] Absorbance [tab/,] Dilution</code> or <code>Sample_ID [tab/,] Absorbance</code>
+                </p>
+                <div class="input-group">
+                    <label>Target Workspace</label>
+                    <select id="import-target-select" style="padding: 6px 8px; border: 1px solid var(--border-color); font-size: 0.8rem;">
+                        <option value="standards">Calibration Standards Table</option>
+                        <option value="samples">Sample Results Batch Table</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Paste Raw CSV / Tab-Separated Data Here</label>
+                    <textarea id="import-raw-textarea" rows="8" placeholder="STD-1&#9;10.0&#9;0.084&#10;STD-2&#9;20.0&#9;0.165&#10;STD-3&#9;50.0&#9;0.412" style="font-family: monospace; font-size: 0.78rem; padding: 8px; border: 1px solid var(--border-color); border-radius: 2px; resize: vertical;"></textarea>
+                </div>
+                <div id="import-preview-box" style="font-size: 0.75rem; color: var(--accent-blue); font-weight: 600;"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('batch-import-modal')">Cancel</button>
+                <button class="btn btn-primary" id="btn-execute-import">📥 Parse & Populate Table</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Analytical Run Details Inspector Modal -->
+    <div id="run-details-modal" class="modal-overlay hidden">
+        <div class="modal-dialog modal-dialog-large">
+            <div class="modal-header">
+                <h3>🔍 Analytical Run Inspector: <span id="modal-run-id-title" style="color: #90caf9;">-</span></h3>
+                <button class="modal-close-btn" onclick="closeModal('run-details-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="coa-meta-grid" style="margin-bottom: 10px;">
+                    <div class="coa-meta-item"><span class="label">Parameter Analyte:</span> <span class="val" id="modal-run-param">-</span></div>
+                    <div class="coa-meta-item"><span class="label">Responsible Analyst:</span> <span class="val" id="modal-run-op">-</span></div>
+                    <div class="coa-meta-item"><span class="label">Calibration Model:</span> <span class="val" id="modal-run-cal">-</span></div>
+                    <div class="coa-meta-item"><span class="label">Execution Timestamp:</span> <span class="val" id="modal-run-time">-</span></div>
+                </div>
+
+                <div class="scroll-table-wrapper" style="max-height: 280px;">
+                    <table class="lims-table" id="modal-run-samples-table">
+                        <thead>
+                            <tr>
+                                <th>Sample ID</th>
+                                <th>Absorbance</th>
+                                <th>Dilution</th>
+                                <th class="modal-conc-unit-lbl">Concentration</th>
+                                <th>WHO Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="modal-run-samples-tbody">
+                            <!-- Dynamic -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="modal-btn-export-csv">📤 Export CSV</button>
+                <button class="btn btn-primary" id="modal-btn-print-coa">🖨️ Generate Certificate of Analysis</button>
+                <button class="btn btn-secondary" onclick="closeModal('run-details-modal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Certificate of Analysis (CoA) Modal & Print Engine -->
+    <div id="coa-modal" class="modal-overlay hidden">
+        <div class="modal-dialog modal-dialog-large">
+            <div class="modal-header">
+                <h3>📄 Official Certificate of Analysis (CoA)</h3>
+                <button class="modal-close-btn" onclick="closeModal('coa-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="coa-print-area" class="coa-container">
+                    <div class="coa-header">
+                        <div>
+                            <h1>CHEMLAB PRO ANALYTICAL SERVICES</h1>
+                            <div class="lab-subtitle">ISO/IEC 17025 Accredited Testing Facility &bull; Quality Control Department</div>
+                        </div>
+                        <div class="coa-header-right">
+                            <div><strong>Report ID:</strong> <span id="coa-report-id">COA-2026-001</span></div>
+                            <div><strong>Issue Date:</strong> <span id="coa-issue-date">2026-11-18</span></div>
+                        </div>
+                    </div>
+
+                    <div class="coa-meta-grid">
+                        <div class="coa-meta-item"><span class="label">Test Parameter / Analyte:</span> <span class="val" id="coa-meta-param">Phosphate</span></div>
+                        <div class="coa-meta-item"><span class="label">Analytical Run ID:</span> <span class="val" id="coa-meta-run-id">RUN-01</span></div>
+                        <div class="coa-meta-item"><span class="label">Operator / Analyst:</span> <span class="val" id="coa-meta-operator">P. Sharma</span></div>
+                        <div class="coa-meta-item"><span class="label">Calibration Equation:</span> <span class="val" id="coa-meta-equation">-</span></div>
+                        <div class="coa-meta-item"><span class="label">Linearity R² Index:</span> <span class="val" id="coa-meta-r2">-</span></div>
+                        <div class="coa-meta-item"><span class="label">Limit of Detection (LOD):</span> <span class="val" id="coa-meta-lod">-</span></div>
+                        <div class="coa-meta-item"><span class="label">Limit of Quantitation (LOQ):</span> <span class="val" id="coa-meta-loq">-</span></div>
+                        <div class="coa-meta-item"><span class="label">Regulatory Permissible Limit:</span> <span class="val" id="coa-meta-limits">-</span></div>
+                    </div>
+
+                    <table class="coa-table">
+                        <thead>
+                            <tr>
+                                <th>Sample Designation</th>
+                                <th>Absorbance (AU)</th>
+                                <th>Dilution Factor</th>
+                                <th id="coa-th-conc">Measured Concentration (mg/L)</th>
+                                <th>Compliance Status</th>
+                                <th>Analytical Verdict</th>
+                            </tr>
+                        </thead>
+                        <tbody id="coa-samples-tbody">
+                            <!-- Dynamic rows -->
+                        </tbody>
+                    </table>
+
+                    <div class="coa-disclaimer">
+                        This test report relates only to the specific items tested. Analysis performed according to Standard Methods for the Examination of Water and Wastewater (APHA/AWWA/WEF). The reported uncertainty is based on a standard uncertainty multiplied by a coverage factor k=2, providing a level of confidence of approximately 95%.
+                    </div>
+
+                    <div class="coa-signatures">
+                        <div class="sig-block">
+                            <span id="coa-sig-analyst">Analyst P. Sharma</span><br>
+                            Analytical Chemist
+                        </div>
+                        <div class="sig-block">
+                            Dr. E. Vance, Ph.D.<br>
+                            Quality Assurance Manager
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('coa-modal')">Close</button>
+                <button class="btn btn-primary" onclick="window.print()">🖨️ Print / Save PDF</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Parameter & Limits Configuration Modal -->
+    <div id="manage-params-modal" class="modal-overlay hidden">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3>⚙️ Analyte Limits & Methods Configuration</h3>
+                <button class="modal-close-btn" onclick="closeModal('manage-params-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p style="color: var(--text-muted); font-size: 0.78rem;">
+                    Configure permissible regulatory limits (WHO / EPA Potable Water Guidelines) for analytical testing:
+                </p>
+                <div class="scroll-table-wrapper" style="max-height: 220px;">
+                    <table class="lims-table" id="manage-params-table">
+                        <thead>
+                            <tr>
+                                <th>Analyte Parameter</th>
+                                <th>Unit</th>
+                                <th>Min Permissible</th>
+                                <th>Max Permissible</th>
+                                <th style="width: 50px;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="manage-params-tbody">
+                            <!-- Dynamic rows -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="panel-container" style="background: #f8fafc; border-style: dashed; margin-top: 6px;">
+                    <h4 style="font-size: 0.8rem; color: var(--accent-blue); margin-bottom: 8px;">➕ Add Custom Analyte Parameter</h4>
+                    <div style="display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr auto; gap: 8px; align-items: flex-end;">
+                        <div class="input-group">
+                            <label>Analyte Name</label>
+                            <input type="text" id="new-param-name" placeholder="e.g. Lead">
+                        </div>
+                        <div class="input-group">
+                            <label>Unit</label>
+                            <input type="text" id="new-param-unit" placeholder="mg/L" value="mg/L">
+                        </div>
+                        <div class="input-group">
+                            <label>Min</label>
+                            <input type="number" id="new-param-min" value="0.0" step="any">
+                        </div>
+                        <div class="input-group">
+                            <label>Max</label>
+                            <input type="number" id="new-param-max" value="0.01" step="any">
+                        </div>
+                        <button class="btn btn-primary" id="btn-add-custom-param" style="height: 32px; padding: 0 12px;">Add</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('manage-params-modal')">Cancel</button>
+                <button class="btn btn-ok" id="btn-save-params-settings">💾 Save Changes</button>
+            </div>
+        </div>
     </div>
 
     <!-- Main Logic Script -->
