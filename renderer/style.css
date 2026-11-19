@@ -1018,3 +1018,231 @@ body {
     }
 }
 
+/* ==========================================================================
+   Multi-Analyte Testing Workstation & Redesign Enhancements
+   ========================================================================== */
+
+/* Sample Hero Banner */
+.sample-hero-container {
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 16px 20px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.sample-hero-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 10px;
+}
+.sample-hero-title h2 {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: var(--accent-blue);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.sample-hero-title p {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+}
+.sample-name-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr auto;
+    gap: 12px;
+    align-items: flex-end;
+}
+.sample-name-input {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--accent-blue);
+    background: #f8fafc;
+    border: 2px solid #b3d4fc;
+    padding: 8px 12px;
+    border-radius: var(--border-radius-sm);
+    width: 100%;
+    outline: none;
+    transition: all 0.15s ease;
+}
+.sample-name-input:focus {
+    border-color: var(--accent-blue);
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(0, 91, 172, 0.15);
+}
+
+/* Overall Verdict Banner */
+.verdict-banner {
+    padding: 12px 18px;
+    border-radius: var(--border-radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    font-weight: 700;
+    transition: all 0.2s ease;
+}
+.verdict-banner.safe {
+    background: #e8f5e9;
+    border: 1px solid #81c784;
+    color: #1b5e20;
+}
+.verdict-banner.exceeded {
+    background: #ffebee;
+    border: 1px solid #e57373;
+    color: #b71c1c;
+}
+.verdict-banner.pending {
+    background: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    color: #475569;
+}
+.verdict-badge-large {
+    padding: 4px 12px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    border-radius: 2px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+.verdict-banner.safe .verdict-badge-large {
+    background: #2e7d32;
+    color: #ffffff;
+}
+.verdict-banner.exceeded .verdict-badge-large {
+    background: #c62828;
+    color: #ffffff;
+}
+.verdict-banner.pending .verdict-badge-large {
+    background: #64748b;
+    color: #ffffff;
+}
+
+/* Multi-Parameter Matrix Table */
+.multiparam-table-wrapper {
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+.multiparam-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+}
+.multiparam-table th {
+    background: #edf1f5;
+    border-bottom: 2px solid var(--border-color);
+    padding: 10px 12px;
+    text-align: left;
+    font-weight: 700;
+    color: var(--accent-dark-header);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+}
+.multiparam-table td {
+    padding: 9px 12px;
+    border-bottom: 1px solid #e2e8f0;
+    vertical-align: middle;
+}
+.multiparam-table tr:hover {
+    background: #f8fafc;
+}
+.abs-input-cell {
+    width: 120px;
+}
+.abs-input-cell input {
+    width: 100%;
+    padding: 6px 8px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #0f172a;
+    background: #f8fafc;
+    border: 1.5px solid #94a3b8;
+    border-radius: var(--border-radius-sm);
+    text-align: right;
+    outline: none;
+    transition: all 0.15s;
+}
+.abs-input-cell input:focus {
+    background: #ffffff;
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 0 2px rgba(0, 91, 172, 0.2);
+}
+.conc-output-cell {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: var(--accent-blue);
+    min-width: 140px;
+}
+.conc-output-cell.safe {
+    color: #2e7d32;
+}
+.conc-output-cell.exceeded {
+    color: #c62828;
+}
+
+/* Multi-Parameter Action Bar */
+.multiparam-action-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 12px 18px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+}
+.action-group-left {
+    display: flex;
+    gap: 8px;
+}
+.action-group-right {
+    display: flex;
+    gap: 10px;
+}
+.btn-print-large {
+    background: #005bac;
+    color: #ffffff;
+    font-size: 0.9rem;
+    font-weight: 700;
+    padding: 9px 20px;
+    box-shadow: 0 2px 8px rgba(0, 91, 172, 0.3);
+}
+.btn-print-large:hover {
+    background: #004c91;
+    transform: translateY(-1px);
+}
+
+/* Calibration Library Grid */
+.cal-library-container {
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 16px;
+    margin-top: 14px;
+}
+.cal-library-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 8px;
+}
+.cal-library-header h3 {
+    font-size: 0.95rem;
+    color: var(--accent-dark-header);
+    font-weight: 700;
+    margin: 0;
+    border: none;
+    padding: 0;
+}
+
+

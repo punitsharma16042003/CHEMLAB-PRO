@@ -23,17 +23,21 @@
             </div>
             
             <nav class="sidebar-nav">
-                <a href="#" class="nav-item active" id="nav-dashboard">
-                    <svg viewBox="0 0 24 24" class="nav-icon"><path d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-4.86 8.86l-3 3.87L9 13.14 6 17h12l-3.86-5.14z"/></svg>
-                    <span>Dashboard</span>
+                <a href="#" class="nav-item active" id="nav-multiparam">
+                    <svg viewBox="0 0 24 24" class="nav-icon"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 14H7v-2h10v2zm0-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                    <span>Multi-Analyte Testing</span>
                 </a>
                 <a href="#" class="nav-item" id="nav-calibration">
                     <svg viewBox="0 0 24 24" class="nav-icon"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
-                    <span>Calibration Curve</span>
+                    <span>Calibration Curves</span>
                 </a>
                 <a href="#" class="nav-item" id="nav-analysis">
                     <svg viewBox="0 0 24 24" class="nav-icon"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
-                    <span>Water Analysis</span>
+                    <span>Single Analyte Batch</span>
+                </a>
+                <a href="#" class="nav-item" id="nav-dashboard">
+                    <svg viewBox="0 0 24 24" class="nav-icon"><path d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-4.86 8.86l-3 3.87L9 13.14 6 17h12l-3.86-5.14z"/></svg>
+                    <span>Dashboard</span>
                 </a>
                 <a href="#" class="nav-item" id="nav-lsi">
                     <svg viewBox="0 0 24 24" class="nav-icon"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
@@ -77,14 +81,98 @@
                         <button class="param-tab" data-param="Fluoride">Fluoride (mg/L)</button>
                     </div>
                 </div>
-                <div class="topbar-right" style="display: flex; align-items: center; gap: 12px;">
+                <div class="topbar-right" style="display: flex; align-items: center; gap: 8px;">
+                    <button class="btn btn-primary" id="btn-topbar-new-cal" style="padding: 4px 10px; font-size: 0.75rem;">➕ New Parameter Curve</button>
                     <button class="btn btn-secondary" id="btn-open-params-modal" style="padding: 4px 10px; font-size: 0.75rem;">⚙️ Analyte Limits</button>
-                    <span class="active-page-title" id="page-title-label">Dashboard</span>
+                    <span class="active-page-title" id="page-title-label">Multi-Analyte Testing</span>
                 </div>
             </header>
 
+            <!-- Multi-Parameter Sample Analysis View (Primary Laboratory Workstation) -->
+            <section class="view-pane" id="multiparam-view">
+                <!-- Sample Hero Card -->
+                <div class="sample-hero-container">
+                    <div class="sample-hero-top">
+                        <div class="sample-hero-title">
+                            <h2>💧 Multi-Parameter Sample Quantitation Workstation</h2>
+                            <p>Enter your sample name and absorbance readings for any parameter. All concentrations, WHO guideline checks, and overall safety verdicts calculate in real-time. Print the final laboratory certificate with one click.</p>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span class="status-indicator safe" id="mp-active-cals-count">Calibrations Loaded</span>
+                            <button class="btn btn-secondary" id="btn-mp-create-cal" style="padding: 4px 10px; font-size: 0.75rem;">➕ Add Another Parameter Curve</button>
+                        </div>
+                    </div>
+
+                    <div class="sample-name-row">
+                        <div class="input-group">
+                            <label>Sample Name / Source Tag *</label>
+                            <input type="text" id="mp-sample-name" class="sample-name-input" value="Drinking Water Sample - Tank A" placeholder="e.g. Borewell Water - Well 4, River Point B...">
+                        </div>
+                        <div class="input-group">
+                            <label>Sample ID</label>
+                            <input type="text" id="mp-sample-id" value="SMP-20261118-001" readonly style="font-weight: 700; color: var(--accent-blue);">
+                        </div>
+                        <div class="input-group">
+                            <label>Sampling Location / Matrix</label>
+                            <input type="text" id="mp-sample-source" value="Potable Municipal Supply" placeholder="e.g. Raw Groundwater">
+                        </div>
+                        <div class="input-group">
+                            <label>Sampling Date</label>
+                            <input type="date" id="mp-sample-date" style="font-size: 0.8rem; padding: 7px 10px;">
+                        </div>
+                        <button class="btn btn-secondary" id="btn-mp-reset-sample" style="height: 36px; padding: 0 12px;" title="Reset and generate fresh sample">🔄 New Sample</button>
+                    </div>
+                </div>
+
+                <!-- Live Overall Verdict Banner -->
+                <div class="verdict-banner pending" id="mp-verdict-banner">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span style="font-size: 1.3rem;" id="mp-verdict-icon">⏳</span>
+                        <div>
+                            <div id="mp-verdict-text" style="font-size: 0.95rem; font-weight: 800;">Awaiting Absorbance Measurements</div>
+                            <div id="mp-verdict-sub" style="font-size: 0.75rem; font-weight: 500; opacity: 0.9;">Type the measured absorbance (Abs) into the parameter fields below to evaluate water safety.</div>
+                        </div>
+                    </div>
+                    <span class="verdict-badge-large" id="mp-verdict-badge">INCOMPLETE</span>
+                </div>
+
+                <!-- Multi-Parameter Matrix Table -->
+                <div class="multiparam-table-wrapper">
+                    <table class="multiparam-table" id="mp-matrix-table">
+                        <thead>
+                            <tr>
+                                <th>Analyte Parameter</th>
+                                <th>Active Calibration Curve</th>
+                                <th>WHO Permissible Standard</th>
+                                <th style="width: 140px;">Measured Absorbance (Abs)</th>
+                                <th style="width: 90px;">Dilution</th>
+                                <th style="width: 170px;">Calculated Concentration</th>
+                                <th style="width: 130px;">WHO Compliance</th>
+                                <th style="width: 60px;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="mp-matrix-tbody">
+                            <!-- Dynamically generated rows for all active calibrated parameters -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Action Bar -->
+                <div class="multiparam-action-bar">
+                    <div class="action-group-left">
+                        <button class="btn btn-secondary" id="btn-mp-fill-demo">🧪 Load Sample Demo Absorbances</button>
+                        <button class="btn btn-secondary" id="btn-mp-clear-abs">🧹 Clear Absorbances</button>
+                        <button class="btn btn-secondary" id="btn-mp-export-csv">📤 Export CSV Data</button>
+                        <button class="btn btn-ok" id="btn-mp-save-run">💾 Save to Run History</button>
+                    </div>
+                    <div class="action-group-right">
+                        <button class="btn btn-print-large" id="btn-mp-print-final">🖨️ Print Final Comprehensive Report</button>
+                    </div>
+                </div>
+            </section>
+
             <!-- Dashboard View -->
-            <section class="view-pane" id="dashboard-view">
+            <section class="view-pane hidden" id="dashboard-view">
                 <div class="dashboard-header-card">
                     <h2>Shimadzu LabSolutions - LIMS Console</h2>
                     <p>Qualitative and quantitative analysis platform. Select a chemical parameter tab from the top header to configure standard curves and evaluate sample tests against WHO drinking standards.</p>
@@ -170,6 +258,20 @@
 
             <!-- Calibration Curve View -->
             <section class="view-pane hidden" id="calibration-view">
+                <!-- Analyte Switcher & Creator Bar -->
+                <div class="panel-container" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; margin-bottom: 2px;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <label style="font-size: 0.78rem; font-weight: 700; color: var(--accent-dark-header); text-transform: uppercase;">Selected Analyte Parameter:</label>
+                        <select id="cal-analyte-picker" style="padding: 6px 14px; font-weight: 700; color: var(--accent-blue); border: 1.5px solid var(--accent-blue); border-radius: 2px; font-size: 0.85rem; outline: none; background: #ffffff; cursor: pointer;">
+                            <!-- Populated with all parameters -->
+                        </select>
+                        <span class="status-indicator safe" id="cal-analyte-active-status">Active Model Loaded</span>
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn btn-primary" id="btn-open-create-param-modal">➕ Create New Parameter Curve</button>
+                    </div>
+                </div>
+
                 <div class="layout-three-columns">
                     <!-- Column 1: Config & Controls -->
                     <div class="panel-container panel-controls">
@@ -245,6 +347,38 @@
                         <div class="plot-canvas-container">
                             <canvas id="calibration-chart-canvas"></canvas>
                         </div>
+                    </div>
+                </div>
+
+                <!-- Calibrations Library Panel -->
+                <div class="cal-library-container">
+                    <div class="cal-library-header">
+                        <div>
+                            <h3>📚 Parameter Calibrations Library</h3>
+                            <span style="font-size: 0.75rem; color: var(--text-muted);">All parameters calibrated in your system. Any active parameter is immediately available for Multi-Analyte testing.</span>
+                        </div>
+                        <button class="btn btn-secondary" id="btn-refresh-cal-library" style="padding: 3px 8px; font-size: 0.75rem;">🔄 Refresh Library</button>
+                    </div>
+                    <div class="scroll-table-wrapper" style="max-height: 220px;">
+                        <table class="lims-table" id="cal-library-table">
+                            <thead>
+                                <tr>
+                                    <th>Parameter</th>
+                                    <th>Unit</th>
+                                    <th>Calibration Model Name</th>
+                                    <th>Slope (m)</th>
+                                    <th>Intercept (c)</th>
+                                    <th>R² Linearity</th>
+                                    <th>LOD</th>
+                                    <th>LOQ</th>
+                                    <th>Status</th>
+                                    <th style="width: 120px;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="cal-library-tbody">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </section>
@@ -645,26 +779,31 @@
                         </div>
                     </div>
 
-                    <div class="coa-meta-grid">
-                        <div class="coa-meta-item"><span class="label">Test Parameter / Analyte:</span> <span class="val" id="coa-meta-param">Phosphate</span></div>
-                        <div class="coa-meta-item"><span class="label">Analytical Run ID:</span> <span class="val" id="coa-meta-run-id">RUN-01</span></div>
-                        <div class="coa-meta-item"><span class="label">Operator / Analyst:</span> <span class="val" id="coa-meta-operator">P. Sharma</span></div>
-                        <div class="coa-meta-item"><span class="label">Calibration Equation:</span> <span class="val" id="coa-meta-equation">-</span></div>
-                        <div class="coa-meta-item"><span class="label">Linearity R² Index:</span> <span class="val" id="coa-meta-r2">-</span></div>
-                        <div class="coa-meta-item"><span class="label">Limit of Detection (LOD):</span> <span class="val" id="coa-meta-lod">-</span></div>
-                        <div class="coa-meta-item"><span class="label">Limit of Quantitation (LOQ):</span> <span class="val" id="coa-meta-loq">-</span></div>
-                        <div class="coa-meta-item"><span class="label">Regulatory Permissible Limit:</span> <span class="val" id="coa-meta-limits">-</span></div>
+                    <div class="coa-meta-grid" id="coa-meta-container">
+                        <div class="coa-meta-item"><span class="label">Sample Name / Tag:</span> <span class="val" id="coa-meta-sample-name">-</span></div>
+                        <div class="coa-meta-item"><span class="label">Sample Identifier:</span> <span class="val" id="coa-meta-sample-id">-</span></div>
+                        <div class="coa-meta-item"><span class="label">Source / Matrix:</span> <span class="val" id="coa-meta-source">Potable Water</span></div>
+                        <div class="coa-meta-item"><span class="label">Lead Analyst / Operator:</span> <span class="val" id="coa-meta-operator">-</span></div>
+                        <div class="coa-meta-item"><span class="label">Testing Date & Time:</span> <span class="val" id="coa-meta-time">-</span></div>
+                        <div class="coa-meta-item"><span class="label">Testing Standards:</span> <span class="val" id="coa-meta-standards">WHO / EPA Guidelines</span></div>
+                    </div>
+
+                    <!-- Overall Verdict Card on Report -->
+                    <div class="verdict-banner safe" id="coa-verdict-card" style="margin-bottom: 16px;">
+                        <span id="coa-verdict-title" style="font-size: 0.95rem; font-weight: 800;">VERDICT: WATER MEETS ALL SAFE DRINKING STANDARDS</span>
+                        <span class="verdict-badge-large" id="coa-verdict-badge">PASSED</span>
                     </div>
 
                     <table class="coa-table">
-                        <thead>
+                        <thead id="coa-table-thead">
                             <tr>
-                                <th>Sample Designation</th>
-                                <th>Absorbance (AU)</th>
-                                <th>Dilution Factor</th>
-                                <th id="coa-th-conc">Measured Concentration (mg/L)</th>
+                                <th>Analyte Parameter</th>
+                                <th>Measured Absorbance</th>
+                                <th>Dilution</th>
+                                <th>Measured Concentration</th>
+                                <th>Permissible Standard</th>
                                 <th>Compliance Status</th>
-                                <th>Analytical Verdict</th>
+                                <th>Applied Calibration Curve</th>
                             </tr>
                         </thead>
                         <tbody id="coa-samples-tbody">
@@ -673,7 +812,7 @@
                     </table>
 
                     <div class="coa-disclaimer">
-                        This test report relates only to the specific items tested. Analysis performed according to Standard Methods for the Examination of Water and Wastewater (APHA/AWWA/WEF). The reported uncertainty is based on a standard uncertainty multiplied by a coverage factor k=2, providing a level of confidence of approximately 95%.
+                        This analytical certificate relates specifically to the sample designated above. All quantitations performed via certified spectrophotometric / standard analytical calibrations conforming to ISO/IEC 17025 and APHA/AWWA guidelines.
                     </div>
 
                     <div class="coa-signatures">
@@ -683,14 +822,55 @@
                         </div>
                         <div class="sig-block">
                             Dr. E. Vance, Ph.D.<br>
-                            Quality Assurance Manager
+                            Laboratory Director & QA Manager
                         </div>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="closeModal('coa-modal')">Close</button>
-                <button class="btn btn-primary" onclick="window.print()">🖨️ Print / Save PDF</button>
+                <button class="btn btn-primary" onclick="window.print()">🖨️ Print Final Laboratory Certificate (PDF)</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Custom Parameter Modal -->
+    <div id="create-param-modal" class="modal-overlay hidden">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3>➕ Create New Parameter & Calibration Curve</h3>
+                <button class="modal-close-btn" onclick="closeModal('create-param-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p style="color: var(--text-muted); font-size: 0.78rem;">
+                    Define any chemical parameter / analyte you want to measure (e.g. Copper, Ammonia, Sulfate, Lead, Turbidity, COD). Once calibrated, it will immediately appear in your Multi-Analyte Testing Workstation.
+                </p>
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label>Parameter Name *</label>
+                        <input type="text" id="cp-param-name" placeholder="e.g. Copper, Ammonia, Lead, Sulfate">
+                    </div>
+                    <div class="input-group">
+                        <label>Measurement Unit *</label>
+                        <input type="text" id="cp-param-unit" value="mg/L" placeholder="mg/L, ppm, ppb, NTU, AU">
+                    </div>
+                    <div class="input-group">
+                        <label>WHO/EPA Min Permissible Limit</label>
+                        <input type="number" id="cp-param-min" value="0.0" step="any">
+                    </div>
+                    <div class="input-group">
+                        <label>WHO/EPA Max Permissible Limit</label>
+                        <input type="number" id="cp-param-max" value="1.0" step="any">
+                    </div>
+                </div>
+                <div class="input-group" style="margin-top: 10px;">
+                    <label>Action / Treatment If Limit Exceeded</label>
+                    <input type="text" id="cp-param-action" value="Coagulation / Reverse Osmosis Treatment" placeholder="e.g. Aeration, Ion Exchange, Filtration">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('create-param-modal')">Cancel</button>
+                <button class="btn btn-primary" id="btn-submit-create-param">➕ Create & Open Curve Builder</button>
             </div>
         </div>
     </div>

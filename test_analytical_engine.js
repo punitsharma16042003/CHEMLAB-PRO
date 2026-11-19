@@ -147,4 +147,116 @@ const tssVal = computeTSS(1.2405, 1.2482, 250);
 console.log("TSS Concentration:", tssVal.toFixed(1), "mg/L");
 assert.strictEqual(Math.round(tssVal * 10) / 10, 30.8, "TSS gravimetric check");
 
-console.log(">>> ALL ANALYTICAL ENGINE METROLOGY TESTS PASSED! <<<");
+// 5. Multi-Parameter Sample Quantitation Engine Test
+console.log("\n--- Testing Multi-Parameter Sample Quantitation Engine ---");
+const calibrationsDb = {
+    Phosphate: {
+        analyte: "Phosphate",
+        unit: "mg/L",
+        slope: 0.0082,
+        intercept: 0.002,
+        r2: 0.9998,
+        whoLimitMin: null,
+        whoLimitMax: 5.0,
+        standards: [[0, 0], [10, 0.082], [50, 0.412]]
+    },
+    Nitrate: {
+        analyte: "Nitrate",
+        unit: "mg/L",
+        slope: 0.0150,
+        intercept: 0.001,
+        r2: 0.9995,
+        whoLimitMin: null,
+        whoLimitMax: 50.0,
+        standards: [[0, 0], [20, 0.300], [50, 0.751]]
+    },
+    Lead: {
+        analyte: "Lead",
+        unit: "mg/L",
+        slope: 0.0450,
+        intercept: 0.0005,
+        r2: 0.9991,
+        whoLimitMin: null,
+        whoLimitMax: 0.01,
+        standards: [[0, 0], [0.01, 0.00095], [0.05, 0.0023]]
+    }
+};
+
+function quantitateSampleMultiParam(sampleName, inputAbsorbances) {
+    const results = [];
+    let hasViolation = false;
+
+    for (const [param, absVal] of Object.entries(inputAbsorbances)) {
+        const cal = calibrationsDb[param];
+        if (!cal) continue;
+
+        let conc = 0;
+        if (cal.slope && cal.slope > 0) {
+            conc = (absVal - (cal.intercept || 0)) / cal.slope;
+            if (conc < 0) conc = 0;
+        }
+
+        let status = 'OPTIMAL';
+        let isCompliant = true;
+        if (cal.whoLimitMax !== null && conc > cal.whoLimitMax) {
+            status = 'EXCEEDS LIMIT';
+            isCompliant = false;
+            hasViolation = true;
+        }
+
+        results.push({
+            parameter: param,
+            unit: cal.unit,
+            abs: absVal,
+            concentration: conc,
+            whoLimit: cal.whoLimitMax,
+            status: status,
+            compliant: isCompliant
+        });
+    }
+
+    const overallVerdict = hasViolation ? 'CONTAMINATED / NON-COMPLIANT' : 'SAFE / COMPLIANT';
+    return {
+        sampleName,
+        sampleId: 'SMP-' + Date.now().toString(36).toUpperCase(),
+        timestamp: new Date().toISOString(),
+        overallVerdict,
+        results
+    };
+}
+
+// Test Sample 1: Safe Drinking Water
+const sampleSafe = quantitateSampleMultiParam("Municipal Water Well #1", {
+    Phosphate: 0.016, // conc ~ 1.7 mg/L (< 5.0)
+    Nitrate: 0.151,   // conc ~ 10.0 mg/L (< 50.0)
+    Lead: 0.0006      // conc ~ 0.002 mg/L (< 0.010)
+});
+
+console.log("Safe Sample Test:", {
+    name: sampleSafe.sampleName,
+    verdict: sampleSafe.overallVerdict,
+    paramsCount: sampleSafe.results.length
+});
+assert.strictEqual(sampleSafe.overallVerdict, 'SAFE / COMPLIANT');
+assert.strictEqual(sampleSafe.results[0].status, 'OPTIMAL');
+assert.strictEqual(sampleSafe.results[1].status, 'OPTIMAL');
+assert.strictEqual(sampleSafe.results[2].status, 'OPTIMAL');
+
+// Test Sample 2: Contaminated with Lead
+const sampleContaminated = quantitateSampleMultiParam("Industrial Effluent Pond B", {
+    Phosphate: 0.016,
+    Nitrate: 0.151,
+    Lead: 0.0050      // conc ~ 0.10 mg/L (> 0.010 limit!)
+});
+
+console.log("Contaminated Sample Test:", {
+    name: sampleContaminated.sampleName,
+    verdict: sampleContaminated.overallVerdict,
+    leadConc: sampleContaminated.results.find(r => r.parameter === 'Lead').concentration.toFixed(4)
+});
+assert.strictEqual(sampleContaminated.overallVerdict, 'CONTAMINATED / NON-COMPLIANT');
+const leadResult = sampleContaminated.results.find(r => r.parameter === 'Lead');
+assert.strictEqual(leadResult.status, 'EXCEEDS LIMIT');
+assert.strictEqual(leadResult.compliant, false);
+
+console.log(">>> ALL ANALYTICAL ENGINE METROLOGY & MULTI-PARAM TESTS PASSED! <<<");
